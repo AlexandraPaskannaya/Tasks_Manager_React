@@ -1,0 +1,28 @@
+.task-item {
+    padding: 10px;
+    border: 2px solid rgb(84, 120, 197);
+    border-radius: 25px;
+    text-align: start;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.fa-edit {
+    color: rgb(200, 73, 255);
+    margin-left: 15px;
+    cursor: pointer;
+    width: 25px;
+
+}
+
+.fa-trash-alt{
+    color: rgb(24, 120, 197);
+    margin-left: 30px;
+    cursor: pointer;
+    width: 25px;
+}
+
+input{
+  margin-right: 10px;
+}
