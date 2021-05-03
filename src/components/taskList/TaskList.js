@@ -8,19 +8,18 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
 
     const [taskName, setTaskName] = useState('');
 
-
     const inputEl = useRef(null);
 
     const handleInputChange = (event) => {
 
-            setTaskName(event.target.value);
+            setTaskName(event.target.value.trim());
     }
 
     const handleKeyDown = (event) => {
 
         if(event.key === "Enter") {
 
-            if(taskName.trim().length > 0 ) {
+            if(taskName.length > 0 ) {
 
                 inputEl.current.blur();
 
@@ -47,7 +46,11 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
 
                 {tasks && tasks.length > 0 && tasks.map((task, index) => {
                     return(
-                        <TaskItem key={index} task={task} number={index} />
+                        <TaskItem key={index} 
+                                  task={task} 
+                                  number={index} 
+                                  checked={task.checked}
+                                  tasksType={tasksType}/>
                     )
                 })}
 
