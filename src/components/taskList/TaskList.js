@@ -13,6 +13,7 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
     const handleInputChange = (event) => {
 
             setTaskName(event.target.value.trim());
+            
     }
 
     const handleKeyDown = (event) => {

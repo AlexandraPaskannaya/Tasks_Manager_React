@@ -66,6 +66,7 @@ export const TasksPage = () => {
     }
 
     const removeTasks = (type, index) => {
+
         const tasksCopy = {...tasks};
 
         tasksCopy[type].splice(index, 1);
@@ -73,24 +74,28 @@ export const TasksPage = () => {
         setTasks(tasksCopy);
     }
 
-    /*const editTasks = (type, index, editText, task) => {
+    const editTasks = (task,  index, tasksType, editTask) => {
+
         if(!task.checked) {
+
             const tasksCopy = {...tasks};
 
-            if(task.name === editText.name) return true;
+            if(task.name === editTask.name) {
 
-            else{
-                tasksCopy[type].splice(index, 1, editText);
+                return true;
+
+            } else {
+
+                tasksCopy[tasksType].splice(index, 1, editTask);
 
                 setTasks(tasksCopy);
             }
            
-        } else return
-
-    }*/
+        } else return;
+    }
 
     return (
-        <Context.Provider value = {{handleCheckStatus, removeTasks}}>
+        <Context.Provider value = {{handleCheckStatus, removeTasks, editTasks, checkDublicates}}>
             <div className="tasks">
 
                     <div className="tasks-header">

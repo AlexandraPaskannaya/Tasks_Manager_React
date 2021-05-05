@@ -6,11 +6,14 @@
     font-size: 20px;
     margin-bottom: 20px;
     color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
 .fa-edit {
     color: rgb(200, 73, 255);
-    margin-left: 15px;
+    
     cursor: pointer;
     width: 25px;
 
@@ -18,12 +21,17 @@
 
 .fa-trash-alt{
     color: rgb(24, 120, 197);
-    margin-left: 15px;
+
     cursor: pointer;
     width: 25px;
 }
 
 input{
-  margin-right: 10px;
+    margin-right: 2px;
+    border: 2px solid lightblue;
+    border-radius: 25px;
+    outline: none;
+    font-size: 18px;
+    opacity: 0.7;
 }
 
