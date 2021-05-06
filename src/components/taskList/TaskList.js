@@ -1,14 +1,16 @@
 import PropTypes from "prop-types";
 import {useState, useRef} from "react";
+import {connect} from "react-redux";
 
+import {createTask, checkDublicates} from "../../redux/actions/taskActions";
 import {TaskItem} from "../taskItem/TaskItem";
 import "./TaskList.scss";
 
-export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
+const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation, createTask, checkDublicates}) => {
 
     const [taskName, setTaskName] = useState('');
 
-    const inputEl = useRef(null);
+    const inputEl = useRef();
 
     const handleInputChange = (event) => {
 
@@ -20,38 +22,44 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
 
         if(event.key === "Enter") {
 
-            if(taskName.length > 0 ) {
+            //if(addNewTask(taskName, tasksType)) {
 
-                inputEl.current.blur();
+                //inputEl.current.blur();
 
-                console.log("handleKeyDown", taskName, tasksType);
+                //console.log("handleKeyDown", taskName, tasksType);
 
-                addNewTask(taskName, tasksType);
+                //setTaskName("");           
+                checkDublicates({taskName, tasksType});
 
-                setTaskName("");           
+                createTask({taskName, tasksType});
 
-            } else {
+                setTaskName("")
 
-                setTaskName("");  
-                return
+            } //else {
 
-            }
-        }
+                //setTaskName("");  
+                //return
+
+            //}
+        //}
     }
 
-   
+    console.log('tasks', tasks);
 
     return (
 
             <div className="task-list">
 
-                {tasks && tasks.length > 0 && tasks.map((task, index) => {
+                {tasks[tasksType] && tasks[tasksType].length > 0 && tasks[tasksType].map((task, index) => {
+
+                    console.log('task', task);
+                    
                     return(
                         <TaskItem key={index} 
                                   task={task} 
                                   number={index} 
                                   checked={task.checked}
-                                  tasksType={tasksType}/>
+                                  type={tasksType}/>
                     )
                 })}
 
@@ -63,7 +71,10 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown} />
 
-                {dublicateCreation
+                {
+                ((tasksType === "unImportant" && tasks.unImportantDublicate) ||
+                (tasksType === "important" && tasks.importantDublicate) ||
+                (tasksType === "veryImportant" && tasks.veryImportantDublicate))
                 &&
                 <span className="task-list-error">Такая задача уже существует</span>}
                 
@@ -73,7 +84,20 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation}) => {
 }
 
 TaskList.propTypes = {
-    tasks:PropTypes.object,
     tasksType:PropTypes.string,
-    addNewTask:PropTypes.func
+    dublicateCreation: PropTypes.bool,
+    addNewTask:PropTypes.func,
+    tasks:PropTypes.object,
+    createTask:PropTypes.func,
+    checkDublicates:PropTypes.func
 };
+
+const mapStateToProps = (state) => {
+    
+    return {tasks: state.taskReducer}
+}
+
+export default connect (
+    mapStateToProps,
+    {createTask, checkDublicates},
+)(TaskList);

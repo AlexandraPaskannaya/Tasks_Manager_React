@@ -1,7 +1,7 @@
 import {useState} from "react";
 import { Context } from "../../useContext"
 
-import {TaskList} from "../../components";
+import TaskList from "../../components/taskList/TaskList";
 import "./Tasks.scss";
 
 export const TasksPage = () => {
@@ -94,8 +94,15 @@ export const TasksPage = () => {
         } else return;
     }
 
+    const contextValue = {
+        handleCheckStatus, 
+        removeTasks, 
+        editTasks, 
+        checkDublicates
+    }
+
     return (
-        <Context.Provider value = {{handleCheckStatus, removeTasks, editTasks, checkDublicates}}>
+        <Context.Provider value = {contextValue}>
             <div className="tasks">
 
                     <div className="tasks-header">
@@ -108,7 +115,7 @@ export const TasksPage = () => {
                             Неважные задачи
                         </div>
 
-                        <TaskList tasks={tasks.unImportant}
+                        <TaskList 
                                 tasksType="unImportant"
                                 addNewTask={onAddNewTask}
                                 dublicateCreation={dublicateCreation.unImportant}
@@ -120,7 +127,7 @@ export const TasksPage = () => {
                             Важные задачи
                         </div>
 
-                        <TaskList tasks={tasks.important}
+                        <TaskList 
                                 tasksType="important"
                                 addNewTask={onAddNewTask}
                                 dublicateCreation={dublicateCreation.important} />          
@@ -130,7 +137,7 @@ export const TasksPage = () => {
                         <div className="tasks-main-col-veryImportant">
                             Самые важные задачи
                         </div>
-                        <TaskList tasks={tasks.veryImportant}
+                        <TaskList 
                                 tasksType="veryImportant"
                                 addNewTask={onAddNewTask} 
                                 dublicateCreation={dublicateCreation.veryImportant}/>          
