@@ -10,18 +10,18 @@ export const TasksPage = () => {
 
     const [dublicateCreation, setDublicateCreation] = useState({unImportant: false}, {important: false}, {veryImportant: false});
 
-    const onAddNewTask = (name, type) => {
+    const [dublicateEdit, setDublicateEdit] = useState({unImportant: false}, {important: false}, {veryImportant: false});
+    
+    const fullEdit = tasks.unImportant.concat(tasks.important, tasks.veryImportant);
+
+    const onAddNewTask = (type, name) => {
         console.log("onAddNewTask", name, type);
 
         const tasksCopy = {...tasks};
 
-        const {unImportant, important, veryImportant} = tasksCopy;
-
-        if(!checkDublicates(unImportant.concat(important, veryImportant), name)) {
+        if(checkDublicates(name)) {
             
-            tasksCopy[type].push({ name, checked: false});
-
-            console.log("onAddNewTask", tasksCopy);
+            tasksCopy[type].push({name: name.trim(), checked: false});
 
             setTasks(tasksCopy);
 
@@ -37,6 +37,7 @@ export const TasksPage = () => {
             dublicateCreationCopy[type] = true;
 
             setTasks(tasksCopy);
+
             setDublicateCreation(dublicateCreationCopy);
 
             return false;
@@ -44,14 +45,59 @@ export const TasksPage = () => {
         }
     }
 
-    const checkDublicates = (tasks, name) => {
+    const checkDublicates = (name) => {
 
-        const index = tasks.findIndex(task => task.name === name);
+        if(fullEdit.findIndex(item => item.name === name.trim()) === -1){
 
-        return index !== -1;
+            return true;
+
+        } else {
+            return false;
+        }
 
     }
 
+    const checkDublicatesEdit = (editTask, fullEdit) => {
+
+        if (fullEdit.filter(item => item.name === editTask.name).length > 1) {
+          
+            return false
+
+       } else {
+            
+            return true;  
+        }  
+
+    }
+
+    const resetDublicateCreation = (type) => {
+
+        const dublicateCreationCopy = {...dublicateCreation};
+
+        dublicateCreationCopy[type] = false;
+
+        setDublicateCreation(dublicateCreationCopy);
+
+    }
+
+    const resetDublicateEdit = (type) => {
+
+        const dublicateEditCopy = {...dublicateEdit};
+
+        dublicateEditCopy[type] = false;
+
+        setDublicateEdit(dublicateEditCopy);
+
+    }
+
+    const highlightDublicates = (type) => {
+
+        const dublicateEditCopy = {...dublicateEdit};
+
+        dublicateEditCopy[type] = true;
+        
+        setDublicateEdit(dublicateEditCopy);
+    }
 
     const handleCheckStatus = (type, index, checked) => {
 
@@ -94,8 +140,9 @@ export const TasksPage = () => {
         } else return;
     }
 
+
     return (
-        <Context.Provider value = {{handleCheckStatus, removeTasks, editTasks, checkDublicates}}>
+        <Context.Provider value = {{handleCheckStatus, removeTasks, editTasks, checkDublicates, resetDublicateEdit, checkDublicatesEdit, highlightDublicates, fullEdit}}>
             <div className="tasks">
 
                     <div className="tasks-header">
@@ -112,6 +159,8 @@ export const TasksPage = () => {
                                 tasksType="unImportant"
                                 addNewTask={onAddNewTask}
                                 dublicateCreation={dublicateCreation.unImportant}
+                                resetDublicate={resetDublicateCreation}
+                                dublicateCreationEdit={dublicateEdit.unImportant}
                                 />          
                     </div>
 
@@ -123,7 +172,9 @@ export const TasksPage = () => {
                         <TaskList tasks={tasks.important}
                                 tasksType="important"
                                 addNewTask={onAddNewTask}
-                                dublicateCreation={dublicateCreation.important} />          
+                                dublicateCreation={dublicateCreation.important}
+                                resetDublicate={resetDublicateCreation}
+                                dublicateCreationEdit={dublicateEdit.important} />          
                     </div> 
 
                     <div className="tasks-main-col">
@@ -133,7 +184,9 @@ export const TasksPage = () => {
                         <TaskList tasks={tasks.veryImportant}
                                 tasksType="veryImportant"
                                 addNewTask={onAddNewTask} 
-                                dublicateCreation={dublicateCreation.veryImportant}/>          
+                                dublicateCreation={dublicateCreation.veryImportant}
+                                resetDublicate={resetDublicateCreation}
+                                dublicateCreationEdit={dublicateEdit.veryImportant}/>          
                     </div>
                 </div>
             </div>

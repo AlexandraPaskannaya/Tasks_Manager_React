@@ -4,14 +4,17 @@ import { Context } from "../../useContext"
 
 import "./TaskItem.scss"
 
-export const TaskItem = ({task, number, tasksType}) => {
+export const TaskItem = ({task, number, tasksType, dublicateCreationEdit}) => {
 
-    const {handleCheckStatus, removeTasks, editTasks} = useContext(Context);
+    const {handleCheckStatus, removeTasks, editTasks, resetDublicateEdit, checkDublicatesEdit, highlightDublicates, fullEdit} = useContext(Context);
     const [editTask, setEditTask] = useState({name: '', checked: false});
+    const [upDateTask, setupDateTask] = useState(false);
 
     const inputEl = useRef(null);
 
     const handleInputUpdate = (event) => {
+
+        setupDateTask(true);
 
         const editTaskCopy = {...editTask}
 
@@ -21,17 +24,34 @@ export const TaskItem = ({task, number, tasksType}) => {
     
         editTasks(task, number, tasksType, editTaskCopy);
 
+        if(dublicateCreationEdit) {
+
+            resetDublicateEdit(tasksType);
+        }
+
       }
 
       const submitEditTask = (event) => {
     
-        if((event.key === "Enter")){
+        if(event.key === "Enter"){
+
+            if(checkDublicatesEdit(editTask, fullEdit)) {
+
+                setupDateTask(false);
+
+                inputEl.current.blur();
+
+                setEditTask({name: '', checked: false});
+
+                console.log('editTask', tasksType, number, event.target.value);
+
+            } else {
+
+                highlightDublicates(tasksType);
+
+                console.log('такая задача уже существует')
+            }
          
-            inputEl.current.blur();
-
-            setEditTask({name: '', checked: false});
-
-            console.log('editTask', tasksType, number, event.target.value);
       } 
     }
 
@@ -67,5 +87,6 @@ export const TaskItem = ({task, number, tasksType}) => {
 TaskItem.propTypes = {
     task:PropTypes.object,
     tasksType:PropTypes.string,
-    number:PropTypes.number
+    number:PropTypes.number,
+    dublicateCreationEdit: PropTypes.bool
 };
