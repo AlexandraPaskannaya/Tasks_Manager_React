@@ -1,53 +1,101 @@
 import PropTypes from "prop-types";
 import {useState, useRef} from "react";
+import {connect} from "react-redux";
 
+import {createTask, checkDublicates, checkTasks, removeTask, editTasks} from "../../redux/actions/taskActions";
 import {TaskItem} from "../taskItem/TaskItem";
 import "./TaskList.scss";
 
-export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation, resetDublicate, dublicateCreationEdit}) => {
+ const TaskList = ({tasks, tasksType, createTask, checkDublicates, checkTasks, removeTask, editTasks}) => {
 
     const [taskName, setTaskName] = useState('');
 
+    const [dublicateCreation, setDublicateCreation] = useState({duplicate: false});
+
     const inputEl = useRef(null);
+
 
     const handleInputChange = (event) => {
 
             setTaskName(event.target.value.trim());
             
-            if(dublicateCreation) {
+            if(!highlightDublicateCreation()) {
                 
-                resetDublicate(tasksType);
+                resetDublicateCreation();
             }
+    }
+
+    const checkDublicateTasks = (tasks, name) => {
+
+        const {unImportant, important, veryImportant} = tasks;
+
+        if (unImportant.concat(important, veryImportant).findIndex(item => item.name === name.trim()) === -1) {
+          
+            return true
+
+       } else return false;  
+        
+    }
+
+    const highlightDublicateCreation = () => {
+
+        const dublicateCreationCopy = {...dublicateCreation};
+
+        dublicateCreationCopy.duplicate = true;
+
+        setDublicateCreation(dublicateCreationCopy);
+
+    }
+
+    const resetDublicateCreation = () => {
+
+        const dublicateCreationCopy = {...dublicateCreation};
+
+        dublicateCreationCopy.duplicate = false;
+
+        setDublicateCreation(dublicateCreationCopy);
+
     }
 
     const handleKeyDown = (event) => {
 
         if(event.key === "Enter") {
 
-            if(addNewTask(tasksType, taskName)) {
+            if(checkDublicateTasks(tasks, taskName)) {
+
+                createTask({taskName, tasksType});
 
                 inputEl.current.blur();
 
-                setTaskName("");           
+                setTaskName("")         
 
-            } 
+            } else {
+                highlightDublicateCreation();
+            }
         }
     }
 
-   
-
+    
     return (
 
             <div className="task-list">
 
-                {tasks && tasks.length > 0 && tasks.map((task, index) => {
+                { tasks[tasksType].length > 0 && tasks[tasksType].map((task, index) => {
+
+                    console.log('task', task);
+
                     return(
                         <TaskItem key={index} 
                                   task={task} 
                                   number={index} 
                                   checked={task.checked}
                                   tasksType={tasksType}
-                                  dublicateCreationEdit={dublicateCreationEdit}/>
+                                  tasks = {tasks}
+                                  checkDublicates={checkDublicates}
+                                  checkTasks={checkTasks}
+                                  removeTask={removeTask} 
+                                  editTasks={editTasks}
+                                  />
                     )}
                 )}
 
@@ -57,20 +105,32 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation, reset
                         name={tasksType}
                         value={taskName}
                         onChange={handleInputChange}
-                        onKeyDown={handleKeyDown} />
+                        onKeyDown={handleKeyDown}
+                        />
 
-                {(dublicateCreation || dublicateCreationEdit)
-                &&
+                { dublicateCreation.duplicate &&
                 <span className="task-list-error">Такая задача уже существует</span>}
-                
 
             </div>
-    );
-}
+        );
+    }
+
 
 TaskList.propTypes = {
     tasks:PropTypes.object,
     tasksType:PropTypes.string,
     addNewTask:PropTypes.func,
-    dublicateCreationEdit:PropTypes.bool
-};
+    dublicateCreationEdit:PropTypes.bool,
+    createTask:PropTypes.func,
+    checkDublicateTasks:PropTypes.func
+}
+
+const mapStateToProps = (state) => {
+    
+    return {tasks: state.taskReducer}
+}
+
+export default connect (
+    mapStateToProps,
+    {createTask, checkDublicates, checkTasks, removeTask, editTasks}
+)(TaskList)
