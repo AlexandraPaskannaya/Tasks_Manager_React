@@ -1,0 +1,60 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+    background: linear-gradient(to left, #edac7d, #659999);;
+    position: fixed; top: 50%; left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border-radius: 25px;
+    border: 2px solid rgb(84, 120, 197);
+
+    h1{
+        color: white
+    }
+
+    span {
+        color: white;
+        align-self: flex-start;
+        margin-left: 10px;
+        margin-bottom: 7px;
+        font-size: larger;
+    }
+
+    &-input {
+        width: 300px;
+        height: 40px;
+        font-size: 18px;
+        margin-bottom: 20px;
+        padding-left: 10px;
+        border-radius: 10px;
+        border: 2px solid rgb(84, 120, 197);
+    }
+
+    &-bntSignIn{
+        margin-bottom: 20px;
+        height: 50px;
+        width: 150px;
+        background-color: rgb(60, 112, 226);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 20px;
+
+        &:hover {
+            background-color: white;
+            color: rgb(60, 112, 226);
+            cursor: pointer;
+        }
+    }
+    &-bntSignUp{
+        color: rgb(60, 112, 226);
+        font-size: larger;
+
+        &:hover {
+            color: whitesmoke;
+        }
+        
+    }
+}

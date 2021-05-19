@@ -1,0 +1,54 @@
+.form {
+    &-backtoSignIn {
+        color: white;
+        align-self: flex-start;
+        margin-left: 10px;
+        
+        font-size: larger;
+
+        &:hover{
+            color: rgb(60, 112, 226);
+            cursor: pointer;
+        }
+    }
+
+    &-select-enter{
+        padding: 6px;
+        font-size: 16px;
+        border: 1px solid whitesmoke;
+        border-radius: 30px;
+        outline: none;
+        width: auto;
+        background-color: whitesmoke;
+        margin-bottom: 10px;
+    }
+
+    &-select-admins{
+        padding: 6px;
+        font-size: 16px;
+        border: 1px solid whitesmoke;
+        border-radius: 30px;
+        outline: none;
+        width: auto;
+        background-color: whitesmoke;
+        margin-bottom: 20px;
+    }
+
+    &-bnt-SignUp{
+        margin-bottom: 20px;
+        height: 50px;
+        width: 250px;
+        background-color: rgb(60, 112, 226);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 20px;
+        
+
+        &:hover {
+            background-color: white;
+            color: rgb(60, 112, 226);
+            cursor: pointer;
+        }
+    }
+}
