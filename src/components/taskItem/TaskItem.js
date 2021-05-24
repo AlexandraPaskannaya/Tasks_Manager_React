@@ -1,53 +1,48 @@
 import PropTypes from "prop-types";
-import { useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-
-import {checkTasks, removeTask, editTasks} from "../../redux/actions/taskActions";
+import { useContext, useRef, useState } from "react";
+import { Context } from "../../useContext"
 
 import "./TaskItem.scss"
 
-export const TaskItem = ({task, number, tasksType, tasks}) => {
+export const TaskItem = ({task, number, tasksType, dublicateCreationEdit}) => {
 
+    const {handleCheckStatus, removeTasks, editTasks, resetDublicateEdit, checkDublicatesEdit, highlightDublicates, fullEdit} = useContext(Context);
     const [editTask, setEditTask] = useState({name: '', checked: false});
-    const [upDateTask, setupDateTask] = useState({dublicate: false});
 
     const inputEl = useRef(null);
-    const dispatch = useDispatch();
 
     const handleInputUpdate = (event) => {
 
         const editTaskCopy = {...editTask}
 
-        editTaskCopy.name = event.target.value.trim();
+        editTaskCopy.name = event.target.value;
 
         setEditTask(editTaskCopy);
     
-            dispatch(editTasks({type: "EDIT_TASK", payload: {task, number, tasksType, editTaskCopy}}));
+        editTasks(task, number, tasksType, editTaskCopy);
 
-        if(checkDublicatesEdit(tasks, editTask)) {
+        if(dublicateCreationEdit) {
 
-            resetDublicateEdit();
+            resetDublicateEdit(tasksType);
         }
 
       }
 
       const submitEditTask = (event) => {
     
-        if(event.key === "Enter"){
+        if(event.key === "Enter" && event.target.value !== ""){
 
-            if(checkDublicatesEdit(tasks, editTask)) {
+            if(checkDublicatesEdit(editTask, fullEdit)) {
 
-                inputEl.current.readOnly = true;
-                
                 inputEl.current.blur();
 
                 setEditTask({name: '', checked: false});
 
-                console.log('editTask');
+                console.log('editTask', tasksType, number, event.target.value);
 
             } else {
 
-                highlightDublicatesEdit();
+                highlightDublicates(tasksType);
 
                 console.log('такая задача уже существует')
             }
@@ -55,69 +50,31 @@ export const TaskItem = ({task, number, tasksType, tasks}) => {
       } 
     }
 
-    const checkDublicatesEdit = (tasks, editTask) => {
-
-        const {unImportant, important, veryImportant} = tasks;
-
-        if (unImportant.concat(important, veryImportant).filter(item => item.name === editTask.name).length > 1) {
-          
-            return false
-
-       } else {
-            
-            return true;  
-        }  
-
-    }
-
-    const highlightDublicatesEdit = () => {
-
-        const upDateTaskCopy = {...upDateTask};
-
-        upDateTaskCopy.dublicate = true;
-        
-        setupDateTask(upDateTaskCopy);
-    }
-
-    const resetDublicateEdit = () => {
-
-        const upDateTaskCopy = {...upDateTask};
-
-        upDateTaskCopy.dublicate = false;
-        
-        setupDateTask(upDateTaskCopy);
-
-    }
-
     return (
         <div className="task-item" id={number}>
 
             <input type="checkbox" 
                     checked={task.checked}
-                    onChange={() => dispatch(checkTasks({type: 'CHECK_TASK', payload: {tasksType, number}}))}/>
+                    onChange={(event) => handleCheckStatus(tasksType, number, event.target.checked)}/>
             
            
             <input ref={inputEl} 
              value={task.name} 
              onChange={handleInputUpdate} 
-             onKeyDown={submitEditTask}
-             readOnly/>
+             onKeyDown={submitEditTask}/>
 
            
 
-            {(!task.checked && editTask.name === '') && 
+            {!task.checked && 
             <i className="fas fa-edit" alt='edit'
-            onClick={() => {inputEl.current.focus();
-                            inputEl.current.readOnly = false}}></i>
+            onClick={() => inputEl.current.focus()}></i>
             }
 
             {task.checked && 
             <i className="fas fa-trash-alt" alt='trash'
-            onClick={() => dispatch(removeTask({type: "REMOVE_TASK", payload: {tasksType, number}}))}></i>
+             onClick={() => removeTasks(tasksType, number)}></i>
              
             }
-             {upDateTask.duplicate &&
-             <span className="task-list-error">Такая задача уже существует</span>}
         </div>
     );
 }
@@ -126,4 +83,5 @@ TaskItem.propTypes = {
     task:PropTypes.object,
     tasksType:PropTypes.string,
     number:PropTypes.number,
+    dublicateCreationEdit: PropTypes.bool
 };
