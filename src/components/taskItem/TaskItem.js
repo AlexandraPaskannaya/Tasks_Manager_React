@@ -1,15 +1,18 @@
 import PropTypes from "prop-types";
 import { useRef, useState } from "react";
-//import { Context } from "../../useContext"
+import { useDispatch } from "react-redux";
+
+import {checkTasks, removeTask, editTasks} from "../../redux/actions/taskActions";
 
 import "./TaskItem.scss"
 
-export const TaskItem = ({task, number, tasksType, checkTasks, removeTask, editTasks, tasks}) => {
+export const TaskItem = ({task, number, tasksType, tasks}) => {
 
     const [editTask, setEditTask] = useState({name: '', checked: false});
     const [upDateTask, setupDateTask] = useState({dublicate: false});
 
     const inputEl = useRef(null);
+    const dispatch = useDispatch();
 
     const handleInputUpdate = (event) => {
 
@@ -19,7 +22,7 @@ export const TaskItem = ({task, number, tasksType, checkTasks, removeTask, editT
 
         setEditTask(editTaskCopy);
     
-        editTasks({task, number, tasksType, editTaskCopy});
+            dispatch(editTasks({type: "EDIT_TASK", payload: {task, number, tasksType, editTaskCopy}}));
 
         if(checkDublicatesEdit(tasks, editTask)) {
 
@@ -91,7 +94,7 @@ export const TaskItem = ({task, number, tasksType, checkTasks, removeTask, editT
 
             <input type="checkbox" 
                     checked={task.checked}
-                    onChange={() => checkTasks({tasksType, number})}/>
+                    onChange={() => dispatch(checkTasks({type: 'CHECK_TASK', payload: {tasksType, number}}))}/>
             
            
             <input ref={inputEl} 
@@ -110,7 +113,7 @@ export const TaskItem = ({task, number, tasksType, checkTasks, removeTask, editT
 
             {task.checked && 
             <i className="fas fa-trash-alt" alt='trash'
-             onClick={() => removeTask({tasksType, number})}></i>
+            onClick={() => dispatch(removeTask({type: "REMOVE_TASK", payload: {tasksType, number}}))}></i>
              
             }
              {upDateTask.duplicate &&

@@ -1,12 +1,14 @@
+import {useSelector, useDispatch} from "react-redux";
+
 import PropTypes from "prop-types";
 import {useState, useRef} from "react";
-import {connect} from "react-redux";
+//import {connect} from "react-redux";
 
-import {createTask, checkDublicates, checkTasks, removeTask, editTasks} from "../../redux/actions/taskActions";
+import {createTask} from "../../redux/actions/taskActions";
 import {TaskItem} from "../taskItem/TaskItem";
 import "./TaskList.scss";
 
- const TaskList = ({tasks, tasksType, createTask, checkDublicates, checkTasks, removeTask, editTasks}) => {
+export const TaskList = ({tasksType}) => {
 
     const [taskName, setTaskName] = useState('');
 
@@ -15,6 +17,11 @@ import "./TaskList.scss";
     const inputEl = useRef(null);
 
 
+    const dispatch = useDispatch();
+
+    const tasks = useSelector(state => state.taskReducer);
+
+    
     const handleInputChange = (event) => {
 
             setTaskName(event.target.value.trim());
@@ -63,7 +70,7 @@ import "./TaskList.scss";
 
             if(checkDublicateTasks(tasks, taskName)) {
 
-                createTask({taskName, tasksType});
+                dispatch(createTask({type: "CREATE_TASK", payload: {taskName, tasksType}}));
 
                 inputEl.current.blur();
 
@@ -91,11 +98,7 @@ import "./TaskList.scss";
                                   checked={task.checked}
                                   tasksType={tasksType}
                                   tasks = {tasks}
-                                  checkDublicates={checkDublicates}
-                                  checkTasks={checkTasks}
-                                  removeTask={removeTask} 
-                                  editTasks={editTasks}
-                                  />
+                                />
                     )}
                 )}
 
@@ -117,20 +120,5 @@ import "./TaskList.scss";
 
 
 TaskList.propTypes = {
-    tasks:PropTypes.object,
     tasksType:PropTypes.string,
-    addNewTask:PropTypes.func,
-    dublicateCreationEdit:PropTypes.bool,
-    createTask:PropTypes.func,
-    checkDublicateTasks:PropTypes.func
 }
-
-const mapStateToProps = (state) => {
-    
-    return {tasks: state.taskReducer}
-}
-
-export default connect (
-    mapStateToProps,
-    {createTask, checkDublicates, checkTasks, removeTask, editTasks}
-)(TaskList)

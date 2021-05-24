@@ -1,4 +1,4 @@
-import TaskList from "../../components/taskList/TaskList";
+import {TaskList} from "../../components/taskList/TaskList";
 import "./Tasks.scss";
 
 export const TasksPage = () => {
