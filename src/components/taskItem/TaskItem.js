@@ -8,13 +8,13 @@ export const TaskItem = ({task, number, tasksType, dublicateCreationEdit}) => {
 
     const {handleCheckStatus, removeTasks, editTasks, resetDublicateEdit, checkDublicatesEdit, highlightDublicates, fullEdit} = useContext(Context);
     const [editTask, setEditTask] = useState({name: '', checked: false});
-    const [upDateTask, setupDateTask] = useState(false);
+    //const [upDateTask, setupDateTask] = useState(false);
 
     const inputEl = useRef(null);
 
     const handleInputUpdate = (event) => {
 
-        setupDateTask(true);
+        //setupDateTask(true);
 
         const editTaskCopy = {...editTask}
 
@@ -37,7 +37,7 @@ export const TaskItem = ({task, number, tasksType, dublicateCreationEdit}) => {
 
             if(checkDublicatesEdit(editTask, fullEdit)) {
 
-                setupDateTask(false);
+                //setupDateTask(false);
 
                 inputEl.current.blur();
 

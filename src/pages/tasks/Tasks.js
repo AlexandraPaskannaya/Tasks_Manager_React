@@ -1,44 +1,81 @@
-import {useState} from "react";
+import { useReducer} from "react";
 import { Context } from "../../useContext"
 
 import {TaskList} from "../../components";
 import "./Tasks.scss";
 
+const initialState = {
+
+    tasks: {
+        unImportant: [],
+        important: [],
+        veryImportant: [],
+    },
+
+    dublicateCreationTasks: {
+        unImportant: false,
+        important: false,
+        veryImportant: false,
+    }
+};
+
+const taskReducer = (state = initialState, action) => {
+
+    switch(action.type) {
+
+        case "CREATE_TASK_UNIMPORTANT":
+            console.log("CREATE_TASK_UNIMPORTANT");
+            const newUnimportantTask = state.tasks.unImportant.concat({name: action.payload.name, checked: false});
+            return {...state, tasks: {...state.tasks, unImportant: newUnimportantTask}};
+        
+        case "CREATE_TASK_IMPORTANT":
+            console.log("CREATE_TASK_IMPORTANT");
+            const newImportantTask = state.tasks.important.concat({name: action.payload.name, checked: false});
+            return {...state, tasks: {...state.tasks, important: newImportantTask}};
+
+        case "CREATE_TASK_VERYIMPORTANT":
+            console.log("CREATE_TASK_VERYIMPORTANT");
+            const newVeryimportantTask = state.tasks.veryImportant.concat({name: action.payload.name, checked: false});
+            return {...state, tasks: {...state.tasks, veryImportant: newVeryimportantTask}};
+        
+        case "CHECK_DUBLICATE_UNIMPORTANT":
+            return {...state, dublicateCreationTasks: {...state.dublicateCreationTasks, unImportant: action.payload}};
+    
+        case "CHECK_DUBLICATE_IMPORTANT":
+            return {...state, dublicateCreationTasks: {...state.dublicateCreationTasks, important: action.payload}};
+    
+        case "CHECK_DUBLICATE_VERYIMPORTANT":
+            return {...state, dublicateCreationTasks: {...state.dublicateCreationTasks, veryImportant: action.payload}};  
+                
+            
+        default:
+            return {...state};
+    }
+
+}
+
 export const TasksPage = () => {
 
-    const [tasks, setTasks] = useState({unImportant: [], important: [], veryImportant: []});
+    const [tasksState, dispatch] = useReducer(taskReducer, initialState);
 
-    const [dublicateCreation, setDublicateCreation] = useState({unImportant: false}, {important: false}, {veryImportant: false});
+    //const [dublicateCreation, setDublicateCreation] = useState({unImportant: false}, {important: false}, {veryImportant: false});
 
-    const [dublicateEdit, setDublicateEdit] = useState({unImportant: false}, {important: false}, {veryImportant: false});
+    //const [dublicateEdit, setDublicateEdit] = useState({unImportant: false}, {important: false}, {veryImportant: false});
     
-    const fullEdit = tasks.unImportant.concat(tasks.important, tasks.veryImportant);
+    const fullEdit = tasksState.tasks.unImportant.concat(tasksState.tasks.important, tasksState.tasks.veryImportant);
 
     const onAddNewTask = (type, name) => {
-        console.log("onAddNewTask", name, type);
-
-        const tasksCopy = {...tasks};
+        console.log("onAddNewTask", name, type);      
 
         if(checkDublicates(name)) {
             
-            tasksCopy[type].push({name: name.trim(), checked: false});
-
-            setTasks(tasksCopy);
-
-            setDublicateCreation('');
+            dispatch({type: `CREATE_TASK_${type.toUpperCase()}`, payload: {name, type}});
 
             return true;
 
         } else {
             //Подсветка дублика
-            
-            const dublicateCreationCopy = {...dublicateCreation};
-            
-            dublicateCreationCopy[type] = true;
-
-            setTasks(tasksCopy);
-
-            setDublicateCreation(dublicateCreationCopy);
+            dispatch({type: `CHECK_DUBLICATE_${type.toUpperCase()}`, payload: true});
 
             return false;
 
@@ -47,7 +84,9 @@ export const TasksPage = () => {
 
     const checkDublicates = (name) => {
 
-        if(fullEdit.findIndex(item => item.name === name.trim()) === -1){
+        const {unImportant, important, veryImportant} = tasksState.tasks;
+
+        if(unImportant.concat(important, veryImportant).findIndex(item => item.name === name.trim()) === -1){
 
             return true;
 
@@ -57,72 +96,69 @@ export const TasksPage = () => {
 
     }
 
+    const resetDublicateCreation = (type) => {
+
+            dispatch({type: `CHECK_DUBLICATE_${type.toUpperCase()}`, payload: false});
+
+    }
+
     const checkDublicatesEdit = (editTask, fullEdit) => {
 
-        if (fullEdit.filter(item => item.name === editTask.name).length > 1) {
+        /*if (fullEdit.filter(item => item.name === editTask.name).length > 1) {
           
             return false
 
        } else {
             
             return true;  
-        }  
+        } */ 
 
     }
 
-    const resetDublicateCreation = (type) => {
-
-        const dublicateCreationCopy = {...dublicateCreation};
-
-        dublicateCreationCopy[type] = false;
-
-        setDublicateCreation(dublicateCreationCopy);
-
-    }
 
     const resetDublicateEdit = (type) => {
 
-        const dublicateEditCopy = {...dublicateEdit};
+        /*const dublicateEditCopy = {...dublicateEdit};
 
         dublicateEditCopy[type] = false;
 
-        setDublicateEdit(dublicateEditCopy);
+        setDublicateEdit(dublicateEditCopy);*/
 
     }
 
     const highlightDublicates = (type) => {
 
-        const dublicateEditCopy = {...dublicateEdit};
+       /*const dublicateEditCopy = {...dublicateEdit};
 
         dublicateEditCopy[type] = true;
         
-        setDublicateEdit(dublicateEditCopy);
+        setDublicateEdit(dublicateEditCopy);*/
     }
 
     const handleCheckStatus = (type, index, checked) => {
 
-        const tasksCopy = {...tasks};
+        /*const tasksCopy = {...tasks};
         
         tasksCopy[type][index].checked = checked;
 
         console.log("inputTasksCopy", tasksCopy);
 
-        setTasks(tasksCopy);
+        setTasks(tasksCopy);*/
 
     }
 
     const removeTasks = (type, index) => {
 
-        const tasksCopy = {...tasks};
+        /*const tasksCopy = {...tasks};
 
         tasksCopy[type].splice(index, 1);
 
-        setTasks(tasksCopy);
+        setTasks(tasksCopy);*/
     }
 
     const editTasks = (task,  index, tasksType, editTask) => {
 
-        if(!task.checked) {
+        /*if(!task.checked) {
 
             const tasksCopy = {...tasks};
 
@@ -137,7 +173,7 @@ export const TasksPage = () => {
                 setTasks(tasksCopy);
             }
            
-        } else return;
+        } else return;*/
     }
 
 
@@ -155,12 +191,11 @@ export const TasksPage = () => {
                             Неважные задачи
                         </div>
 
-                        <TaskList tasks={tasks.unImportant}
+                        <TaskList tasks={tasksState.tasks.unImportant}
                                 tasksType="unImportant"
                                 addNewTask={onAddNewTask}
-                                dublicateCreation={dublicateCreation.unImportant}
+                                dublicateCreation={tasksState.dublicateCreationTasks.unImportant}
                                 resetDublicate={resetDublicateCreation}
-                                dublicateCreationEdit={dublicateEdit.unImportant}
                                 />          
                     </div>
 
@@ -169,24 +204,24 @@ export const TasksPage = () => {
                             Важные задачи
                         </div>
 
-                        <TaskList tasks={tasks.important}
+                        <TaskList tasks={tasksState.tasks.important}
                                 tasksType="important"
                                 addNewTask={onAddNewTask}
-                                dublicateCreation={dublicateCreation.important}
+                                dublicateCreation={tasksState.dublicateCreationTasks.important}
                                 resetDublicate={resetDublicateCreation}
-                                dublicateCreationEdit={dublicateEdit.important} />          
+                                />          
                     </div> 
 
                     <div className="tasks-main-col">
                         <div className="tasks-main-col-veryImportant">
                             Самые важные задачи
                         </div>
-                        <TaskList tasks={tasks.veryImportant}
+                        <TaskList tasks={tasksState.tasks.veryImportant}
                                 tasksType="veryImportant"
                                 addNewTask={onAddNewTask} 
-                                dublicateCreation={dublicateCreation.veryImportant}
+                                dublicateCreation={tasksState.dublicateCreationTasks.veryImportant}
                                 resetDublicate={resetDublicateCreation}
-                                dublicateCreationEdit={dublicateEdit.veryImportant}/>          
+                                />          
                     </div>
                 </div>
             </div>

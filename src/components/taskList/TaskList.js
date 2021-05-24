@@ -69,7 +69,7 @@ export const TaskList = ({tasks, tasksType, addNewTask, dublicateCreation, reset
 }
 
 TaskList.propTypes = {
-    tasks:PropTypes.object,
+    tasks:PropTypes.array,
     tasksType:PropTypes.string,
     addNewTask:PropTypes.func,
     dublicateCreationEdit:PropTypes.bool
